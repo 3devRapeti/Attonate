@@ -196,7 +196,21 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# The project's static/ folder lives at the repo root, not inside an app
+# (accounts/static/ or core/static/) — Django's static file finders only
+# auto-discover per-app static/ dirs, so without this, collectstatic (and
+# local runserver) can't see any of these files at all. This was the actual
+# cause of every static asset 404ing in production.
+STATICFILES_DIRS = [BASE_DIR / "static"]
+
+# Plain Django storage, not WhiteNoise's manifest-based one. WhiteNoise only
+# actually serves files when running `vercel dev` locally — in production on
+# Vercel, static files are served straight from Vercel's CDN based on
+# STATIC_ROOT, and the Manifest storage's strict "every referenced file must
+# resolve cleanly or collectstatic fails outright" behavior isn't worth the
+# risk for a site this size.
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 
 # Cloudinary Media Storage Configuration
 CLOUDINARY_STORAGE = {
