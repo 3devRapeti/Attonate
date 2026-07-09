@@ -215,13 +215,7 @@ CLOUDINARY_STORAGE = {
     'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET'),
 }
 
-# Django 5.1+ unified storage setting (replaces the older standalone
-# STATICFILES_STORAGE / DEFAULT_FILE_STORAGE settings). Using this modern
-# form matters specifically for Vercel: their automatic static-asset
-# detection/publishing appears to introspect STORAGES to determine the
-# static files backend, and doesn't recognize the legacy scalar settings —
-# with only the old-style settings set, collectstatic ran successfully every
-# time but Vercel never published anything from STATIC_ROOT.
+# Django 5.1+ unified storage setting.
 STORAGES = {
     "default": {
         "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
@@ -230,6 +224,17 @@ STORAGES = {
         "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
     },
 }
+
+# django-cloudinary-storage ships its own collectstatic command (since
+# "cloudinary_storage" is in INSTALLED_APPS) that overrides Django's built-in
+# one, and that command reads settings.STATICFILES_STORAGE directly — the
+# legacy attribute, which Django no longer populates once STORAGES is set
+# explicitly. Without this, collectstatic crashes with AttributeError:
+# 'Settings' object has no attribute 'STATICFILES_STORAGE'. Keeping both the
+# modern STORAGES dict and this legacy scalar (pointed at the same backend)
+# satisfies both Django's own code and this third-party package's command.
+STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
+DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
 
 
 # MEDIA_URL = "media/"
