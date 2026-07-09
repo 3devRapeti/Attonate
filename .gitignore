@@ -22,6 +22,7 @@ staticfiles/
 uv.lock
 .python-version
 .vercel/
+pyproject.toml
 
 # User-uploaded media now lives on Cloudinary, not the local filesystem —
 # nothing should land in media/ in production, and the old local dev copies

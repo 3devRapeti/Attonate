@@ -195,7 +195,11 @@ USE_TZ = True
 # --- Static & media files -------------------------------------------------
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+# Written as BASE_DIR / 'staticfiles' (pathlib style) rather than
+# os.path.join(...) to match Vercel's own documented STATIC_ROOT pattern —
+# their automatic static-asset detection may parse settings.py for this
+# exact form rather than executing it.
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # The project's static/ folder lives at the repo root, not inside an app
 # (accounts/static/ or core/static/) — Django's static file finders only
