@@ -208,21 +208,28 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 # cause of every static asset 404ing in production.
 STATICFILES_DIRS = [BASE_DIR / "static"]
 
-# Plain Django storage, not WhiteNoise's manifest-based one. WhiteNoise only
-# actually serves files when running `vercel dev` locally — in production on
-# Vercel, static files are served straight from Vercel's CDN based on
-# STATIC_ROOT, and the Manifest storage's strict "every referenced file must
-# resolve cleanly or collectstatic fails outright" behavior isn't worth the
-# risk for a site this size.
-STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
-
 # Cloudinary Media Storage Configuration
 CLOUDINARY_STORAGE = {
     'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME'),
     'API_KEY': os.environ.get('CLOUDINARY_API_KEY'),
     'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET'),
 }
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+# Django 5.1+ unified storage setting (replaces the older standalone
+# STATICFILES_STORAGE / DEFAULT_FILE_STORAGE settings). Using this modern
+# form matters specifically for Vercel: their automatic static-asset
+# detection/publishing appears to introspect STORAGES to determine the
+# static files backend, and doesn't recognize the legacy scalar settings —
+# with only the old-style settings set, collectstatic ran successfully every
+# time but Vercel never published anything from STATIC_ROOT.
+STORAGES = {
+    "default": {
+        "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+    },
+}
 
 
 # MEDIA_URL = "media/"
