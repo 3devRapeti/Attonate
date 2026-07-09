@@ -19,6 +19,9 @@ __pycache__/
 *.pyc
 db.sqlite3
 staticfiles/
+uv.lock
+.python-version
+.vercel/
 
 # User-uploaded media now lives on Cloudinary, not the local filesystem —
 # nothing should land in media/ in production, and the old local dev copies
