@@ -27,7 +27,7 @@ SECRET_KEY = os.environ.get(
 
 DEBUG = os.environ.get("DJANGO_DEBUG", "True") == "True"
 
-ALLOWED_HOSTS = ['.vercel.app', 'attonate.com', "localhost", "127.0.0.1"]
+ALLOWED_HOSTS = ['.vercel.app', '.attonate.com', "localhost", "127.0.0.1"]
 
 # Needed for POST requests (login/signup/contact forms/etc.) to pass Django's
 # CSRF check in production — without this, every form submit on the deployed
